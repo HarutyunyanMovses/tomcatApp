@@ -40,17 +40,13 @@ public class UserHelper {
         }
 
         // Validate password
-        if (user.getPassword() == null || user.getPassword().isEmpty()) {
-            throw new ValidationException("Password", "Password cannot be null or empty.");
-        } else if (!user.getPassword().matches(passwordPattern)) {
-            throw new ValidationException("Password", "Password must be at least 8 characters long and contain at least one letter and one number.");
-        }
+        validatePassword(user.getPassword());
 
     }
 
     public static void validatePassword(String password) {
         // Validate password
-        if (password == null) {
+        if (password == null || password.isEmpty()) {
             throw new ValidationException("Password", "Password cannot be null or empty.");
         } else if (password.matches(passwordPattern)) {
             throw new ValidationException("Password", "Password must be at least 8 characters long and contain at least one letter and one number.");

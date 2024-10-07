@@ -1,5 +1,6 @@
 package com.Tomcat.controller;
 
+import com.Tomcat.exception.GeneralException;
 import com.Tomcat.exception.UserNotFoundException;
 import com.Tomcat.exception.VerifayException;
 import com.Tomcat.service.UserService;
@@ -21,7 +22,9 @@ public class VerifyServlet extends HttpServlet {
         try {
             UserService.verifyUser(email, code);
         } catch (Exception e) {
-            if (e instanceof VerifayException) {
+            if (e instanceof VerifayException ||
+                    e instanceof UserNotFoundException ||
+                    e instanceof GeneralException) {
                 errorMess = e.getMessage();
             }
             if (e instanceof UserNotFoundException) {
@@ -33,6 +36,6 @@ public class VerifyServlet extends HttpServlet {
             req.getRequestDispatcher("verify_page.jsp").forward(req, resp);
         }
         req.getSession().invalidate();
-        resp.sendRedirect("/index.jsp");
+        resp.sendRedirect("/sign-in.jsp");
     }
 }

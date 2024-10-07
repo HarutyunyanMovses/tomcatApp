@@ -19,49 +19,39 @@ public class ForgotPasswordServlet extends HttpServlet {
         try {
             UserService.SendResetToken(email);
             req.getSession().setAttribute("email", email);
-        }
-        catch (Exception e) {
-            if (e instanceof UserNotFoundException){
-                errorMessage = e.getMessage();
-            }
-            if (e instanceof GeneralException){
+        } catch (Exception e) {
+            if (e instanceof UserNotFoundException || e instanceof GeneralException) {
                 errorMessage = e.getMessage();
             }
         }
-        if (errorMessage != null){
+        if (errorMessage != null) {
             req.setAttribute("errorMessage", errorMessage);
-            req.getRequestDispatcher("forgotPassword.jsp").forward(req, resp);
+            req.getRequestDispatcher("send-reset-token.jsp").forward(req, resp);
         }
-         resp.sendRedirect("confirmForgot.jsp");
+        resp.sendRedirect("change-password.jsp");
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         String email = (String) req.getSession().getAttribute("email");
         String reset_token = req.getParameter("token");
         String password = req.getParameter("newPassword");
         String confirmPassword = req.getParameter("confirmPassword");
         String errorMessage = null;
-
         try {
-            UserService.confirmForgot(email,reset_token,password,confirmPassword);
-        }catch (Exception e ){
-            if (e instanceof ValidationException){
-                errorMessage = e.getMessage();
-            }
-            if (e instanceof UserNotFoundException){
-                errorMessage = e.getMessage();
-            }
-            if (e instanceof GeneralException){
+            UserService.confirmForgot(email, reset_token, password, confirmPassword);
+        } catch (Exception e) {
+            if (e instanceof ValidationException ||
+                    e instanceof UserNotFoundException ||
+                    e instanceof GeneralException) {
                 errorMessage = e.getMessage();
             }
         }
-        if (errorMessage != null){
+        if (errorMessage != null) {
             req.setAttribute("errorMessage", errorMessage);
-            req.getRequestDispatcher("confirmForgot.jsp").forward(req, resp);
+            req.getRequestDispatcher("change-password.jsp").forward(req, resp);
         }
         req.getSession().invalidate();
-        resp.sendRedirect("index.jsp");
+        resp.sendRedirect("sign-in.jsp");
     }
 }

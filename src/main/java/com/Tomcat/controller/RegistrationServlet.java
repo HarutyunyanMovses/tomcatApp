@@ -2,6 +2,7 @@ package com.Tomcat.controller;
 
 import com.Tomcat.email.EmailSender;
 import com.Tomcat.enums.Status;
+import com.Tomcat.exception.GeneralException;
 import com.Tomcat.exception.ResurceAlreadyExistsException;
 import com.Tomcat.exception.ValidationException;
 import com.Tomcat.model.User;
@@ -30,9 +31,11 @@ public class RegistrationServlet extends HttpServlet {
             EmailSender.sendEmail(email, "Your Verification Code"
                     , EmailSender.generateEmailContent(TokenGenerator.generateVerifyToken()));
         } catch (Exception e) {
-            if (e instanceof ValidationException || e instanceof ResurceAlreadyExistsException) {
+            if (e instanceof ValidationException ||
+                    e instanceof ResurceAlreadyExistsException ||
+                    e instanceof GeneralException) {
                 req.setAttribute("errorMess", e.getMessage());
-                req.getRequestDispatcher("/signUp.jsp").forward(req, resp);
+                req.getRequestDispatcher("/sign-up.jsp").forward(req, resp);
             }
         }
         resp.sendRedirect("/verify_page.jsp");

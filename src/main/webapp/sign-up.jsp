@@ -58,7 +58,7 @@
         <span class="valid"><%= displayError("Exist", errorMess) %></span>
     </form>
     <p style="text-align:center; margin-top: 20px;">
-        Already have an account? <a href="index.jsp">Login here</a>
+        Already have an account? <a href="sign-in.jsp">Login here</a>
     </p>
 </div>
 

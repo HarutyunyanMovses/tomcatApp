@@ -23,10 +23,10 @@
         <button type="submit">Login</button>
     </form>
     <p style="text-align:center; margin-top: 20px;">
-        Don't have an account? <a href="signUp.jsp">Register here</a>
+        Don't have an account? <a href="sign-up.jsp">Register here</a>
     </p>
     <p style="text-align:center; margin-top: 20px;">
-        <a href="forgotPassword.jsp">Forgot Password</a>
+        <a href="send-reset-token.jsp">Forgot Password</a>
     </p>
 </div>
 </body>

@@ -39,25 +39,25 @@ public class UserService {
         }
     }
 
-    public static void verifyUser(String email, String code) throws SQLException {
+    public static User verifyUser(String email, String code) throws SQLException {
         User user = UserRepository.getUserByEmail(email);
 
         if (user != null && user.getVerifyCode() != null && user.getVerifyCode().equals(code)) {
-            UserRepository.updateUserStatus(email);
+            UserRepository.updateUserStatus(user.getId());
         } else if (user.getVerifyCode() == null) {
             throw new VerifayException("You are Verifyaed");
         }
-
+        return user;
     }
 
     public static void SendResetToken(String email) throws SQLException {
-        String reset_token = TokenGenerator.generateVerifyToken();
+        String reset_token = TokenGenerator.generateResetToken();
         User user = UserRepository.getUserByEmail(email);
         if (user == null) {
             throw new UserNotFoundException("User not found");
         }
         try {
-            UserRepository.updateUserResetToken(email, reset_token);
+            UserRepository.updateUserResetToken(user.getId(), reset_token);
             EmailSender.sendEmail(email, "Your Reset Token", EmailSender.generateEmailContent(reset_token));
         } catch (Exception e) {
             if (e instanceof SQLException) {
@@ -80,7 +80,22 @@ public class UserService {
         if (!user.getResetToken().equals(reset_token)) {
             throw new ValidationException("errorMessage", "Reset token does not match");
         }
-        UserRepository.forgotPasswordUpdate(email, password);
+        UserRepository.forgotPasswordUpdate(user.getId(), TokenGenerator.passwordEncoder(password));
+    }
+
+    public static User login(String email, String password) {
+        User user = UserRepository.getUserByEmail(email);
+        if (user == null) {
+            throw new ValidationException("errorMessage", "Wrong email or password");
+        }
+        if(!user.getStatus().name().equals(Status.ACTIVE.name())){
+            throw new ResurceAlreadyExistsException ("errorMessage","user are inactive");
+        }
+        if (!user.getPassword().equals(TokenGenerator.passwordEncoder(password))) {
+            throw new ValidationException("errorMessage", "Wrong email or password");
+        }
+        user.setPassword(null);
+        return user;
     }
 
 }

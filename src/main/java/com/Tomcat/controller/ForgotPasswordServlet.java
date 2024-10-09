@@ -41,11 +41,11 @@ public class ForgotPasswordServlet extends HttpServlet {
         try {
             UserService.confirmForgot(email, reset_token, password, confirmPassword);
         } catch (Exception e) {
-            if (e instanceof ValidationException ||
-                    e instanceof UserNotFoundException ||
+            if (e instanceof UserNotFoundException ||
                     e instanceof GeneralException) {
                 errorMessage = e.getMessage();
             }
+            if (e instanceof ValidationException) errorMessage = e.getMessage().split(":")[1];
         }
         if (errorMessage != null) {
             req.setAttribute("errorMessage", errorMessage);

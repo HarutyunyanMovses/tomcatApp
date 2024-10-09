@@ -27,9 +27,6 @@ public class VerifyServlet extends HttpServlet {
                     e instanceof GeneralException) {
                 errorMess = e.getMessage();
             }
-            if (e instanceof UserNotFoundException) {
-                errorMess = e.getMessage();
-            }
         }
         if (errorMess != null) {
             req.setAttribute("errorMess", errorMess);

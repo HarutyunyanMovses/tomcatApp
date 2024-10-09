@@ -89,7 +89,7 @@ public class UserService {
             throw new ValidationException("errorMessage", "Wrong email or password");
         }
         if(!user.getStatus().name().equals(Status.ACTIVE.name())){
-            throw new ResurceAlreadyExistsException ("errorMessage","user are inactive");
+            throw new ResurceAlreadyExistsException ("errorMessage","You are inactive , place verify account");
         }
         if (!user.getPassword().equals(TokenGenerator.passwordEncoder(password))) {
             throw new ValidationException("errorMessage", "Wrong email or password");

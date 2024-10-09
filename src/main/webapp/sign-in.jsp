@@ -19,7 +19,9 @@
             <label for="password">Password</label>
             <input type="password" id="password" name="password" required>
         </div>
-        <div class="error-message" id="error-message"></div>
+        <div class="error-message" id="error-message">
+            <%= request.getAttribute("errorMessage") == null ? "" : request.getAttribute("errorMessage")%>
+        </div>
         <button type="submit">Login</button>
     </form>
     <p style="text-align:center; margin-top: 20px;">

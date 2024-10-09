@@ -30,10 +30,5 @@ public class ConnectionDB {
         }
         return connection;
     }
-
-    public static void main(String[] args) {
-        ConnectionDB connectionDB = new ConnectionDB();
-        connectionDB.getConnection();
-    }
 }
 

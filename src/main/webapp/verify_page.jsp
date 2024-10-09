@@ -13,6 +13,7 @@
         <label for="code">Enter the verification code:</label>
         <input type="text" id="code" name="code" required />
         <input type="hidden" name="email" value="${request.getSession().getAttribute("email")}" />
+        <h4><%= request.getAttribute("errorMessage") == null ? "" : request.getAttribute("errorMessage")%></h4>
         <button type="submit">Verify</button>
     </form>
 </div>

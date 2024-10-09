@@ -24,25 +24,27 @@ public class LoginServlet extends HttpServlet {
         HttpSession session = req.getSession();
         User login = null;
         String errorMessage = null;
+        boolean inactive = false;
         try {
             login = UserService.login(email, password);
         } catch (Exception e) {
-            if (e instanceof ValidationException ||
-                    e instanceof GeneralException) {
+            if (e instanceof ValidationException) errorMessage = e.getMessage().split(":")[1];
+            if (e instanceof ResurceAlreadyExistsException) {
                 errorMessage = e.getMessage();
-
-                if (e instanceof ResurceAlreadyExistsException) {
-                    req.getSession().setAttribute("email",email);
-                    req.getRequestDispatcher("/verify-page.jsp").forward(req,resp);
-                }
+                inactive = true;
             }
+            if (e instanceof GeneralException) errorMessage = e.getMessage();
         }
         if (errorMessage == null) {
             session.setAttribute("user", login);
-            req.getRequestDispatcher("home-page.jsp").forward(req,resp);
-        } else {
-            req.setAttribute("errorMessage", errorMessage);
-            req.getRequestDispatcher("sign-in.jsp").forward(req, resp);
+            req.getRequestDispatcher("home-page.jsp").forward(req, resp);
+        } else if (inactive) {
+            req.setAttribute("errorMessage", errorMessage.split(":")[1]);
+            session.setAttribute("email", email);
+            req.getRequestDispatcher("verify_page.jsp").forward(req, resp);
         }
+        session.setAttribute("user", login);
+        req.getRequestDispatcher("home-page.jsp").forward(req, resp);
     }
 }
+

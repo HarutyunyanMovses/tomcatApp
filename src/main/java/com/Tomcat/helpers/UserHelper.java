@@ -1,7 +1,7 @@
 package com.Tomcat.helpers;
 
 import com.Tomcat.exception.ValidationException;
-import com.Tomcat.model.User;
+import com.Tomcat.model.enttis.User;
 
 public class UserHelper {
 

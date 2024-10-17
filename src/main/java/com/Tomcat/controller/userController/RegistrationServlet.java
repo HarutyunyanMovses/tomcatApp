@@ -1,12 +1,9 @@
-package com.Tomcat.controller;
+package com.Tomcat.controller.userController;
 
 import com.Tomcat.email.EmailSender;
-import com.Tomcat.enums.Status;
 import com.Tomcat.exception.GeneralException;
 import com.Tomcat.exception.ResurceAlreadyExistsException;
 import com.Tomcat.exception.ValidationException;
-import com.Tomcat.model.User;
-import com.Tomcat.repository.UserRepository;
 import com.Tomcat.service.UserService;
 import com.Tomcat.util.TokenGenerator;
 

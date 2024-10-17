@@ -1,10 +1,9 @@
-package com.Tomcat.controller;
+package com.Tomcat.controller.userController;
 
 import com.Tomcat.exception.GeneralException;
 import com.Tomcat.exception.ResurceAlreadyExistsException;
 import com.Tomcat.exception.ValidationException;
-import com.Tomcat.model.User;
-import com.Tomcat.repository.UserRepository;
+import com.Tomcat.model.enttis.User;
 import com.Tomcat.service.UserService;
 
 import javax.servlet.ServletException;
@@ -13,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class LoginServlet extends HttpServlet {
 

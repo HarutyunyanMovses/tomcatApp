@@ -4,13 +4,16 @@ import com.Tomcat.email.EmailSender;
 import com.Tomcat.enums.Status;
 import com.Tomcat.exception.*;
 import com.Tomcat.helpers.UserHelper;
-import com.Tomcat.model.User;
-import com.Tomcat.repository.UserRepository;
+import com.Tomcat.model.enttis.User;
+import com.Tomcat.repository.userRepositoryImpl.UserRepositoryJDBC;
 import com.Tomcat.util.TokenGenerator;
 
 import java.sql.SQLException;
 
 public class UserService {
+
+    private static final UserRepositoryJDBC userRepositoryJDBC = new UserRepositoryJDBC();
+
     public static void saveUser(String name, String surname, String year, String email, String password) {
         if (year == null) {
             throw new ValidationException("year", "Year cannot be null");
@@ -21,12 +24,12 @@ public class UserService {
                     Status.INACTIVE, TokenGenerator.generateVerifyToken(), null);
             try {
                 UserHelper.validateUser(user);
-                User userDB = UserRepository.getUserByEmail(user.getEmail());
+                User userDB = userRepositoryJDBC.getUserByEmail(user.getEmail());
                 if (userDB != null) {
                     throw new ResurceAlreadyExistsException("Exist", "User already exists");
                 } else {
                     user.setPassword(TokenGenerator.passwordEncoder(password));
-                    UserRepository.createUser(user);
+                    userRepositoryJDBC.createUser(user);
                 }
             } catch (Exception e) {
                 if (e instanceof ResurceAlreadyExistsException) {
@@ -40,10 +43,10 @@ public class UserService {
     }
 
     public static User verifyUser(String email, String code) throws SQLException {
-        User user = UserRepository.getUserByEmail(email);
+        User user = userRepositoryJDBC.getUserByEmail(email);
 
         if (user != null && user.getVerifyCode() != null && user.getVerifyCode().equals(code)) {
-            UserRepository.updateUserStatus(user.getId());
+            userRepositoryJDBC.updateUserStatus(user.getId());
         } else if (user.getVerifyCode() == null) {
             throw new VerifayException("You are Verifyaed");
         }
@@ -52,12 +55,12 @@ public class UserService {
 
     public static void SendResetToken(String email) throws SQLException {
         String reset_token = TokenGenerator.generateResetToken();
-        User user = UserRepository.getUserByEmail(email);
+        User user = userRepositoryJDBC.getUserByEmail(email);
         if (user == null) {
             throw new UserNotFoundException("User not found");
         }
         try {
-            UserRepository.updateUserResetToken(user.getId(), reset_token);
+            userRepositoryJDBC.updateUserResetToken(user.getId(), reset_token);
             EmailSender.sendEmail(email, "Your Reset Token", EmailSender.generateEmailContent(reset_token));
         } catch (Exception e) {
             if (e instanceof SQLException) {
@@ -73,23 +76,23 @@ public class UserService {
         if (!password.equals(confirmPassword)) {
             throw new ValidationException("errorMessage", "Passwords do not match");
         }
-        User user = UserRepository.getUserByEmail(email);
+        User user = userRepositoryJDBC.getUserByEmail(email);
         if (user == null) {
             throw new UserNotFoundException("User not found");
         }
         if (!user.getResetToken().equals(reset_token)) {
             throw new ValidationException("errorMessage", "Reset token does not match");
         }
-        UserRepository.forgotPasswordUpdate(user.getId(), TokenGenerator.passwordEncoder(password));
+        userRepositoryJDBC.forgotPasswordUpdate(user.getId(), TokenGenerator.passwordEncoder(password));
     }
 
     public static User login(String email, String password) {
-        User user = UserRepository.getUserByEmail(email);
+        User user = userRepositoryJDBC.getUserByEmail(email);
         if (user == null) {
             throw new ValidationException("errorMessage", "Wrong email or password");
         }
-        if(!user.getStatus().name().equals(Status.ACTIVE.name())){
-            throw new ResurceAlreadyExistsException ("errorMessage","You are inactive , place verify account");
+        if (!user.getStatus().name().equals(Status.ACTIVE.name())) {
+            throw new ResurceAlreadyExistsException("errorMessage", "You are inactive , place verify account");
         }
         if (!user.getPassword().equals(TokenGenerator.passwordEncoder(password))) {
             throw new ValidationException("errorMessage", "Wrong email or password");

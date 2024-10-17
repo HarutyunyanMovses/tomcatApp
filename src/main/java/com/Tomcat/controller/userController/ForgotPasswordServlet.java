@@ -1,4 +1,4 @@
-package com.Tomcat.controller;
+package com.Tomcat.controller.userController;
 
 import com.Tomcat.exception.GeneralException;
 import com.Tomcat.exception.UserNotFoundException;
